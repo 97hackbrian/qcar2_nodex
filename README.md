@@ -3,7 +3,7 @@ Qcar2 start node modified usign launch files.
 
 Just run the next command before compile the new qcar2_nodex package and clone this repo.
 ```bash
-ros2 launch qcar2_nodex qcar2_virtual_launch.py
+ros2 launch qcar2_nodex qcar2_virtual_launch.py camera_ids_config:="0, 1, 2, 3"
 ```
 The expected output is:
 
