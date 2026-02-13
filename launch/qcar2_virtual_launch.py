@@ -30,7 +30,7 @@ def launch_setup(context, *args, **kwargs):
 
     for i in numbers:
         node = Node(
-            package='qcar2_nodes',
+            package='qcar2_nodex',
             executable='csi',
             # Es importante que cada nodo tenga un nombre único
             name=f'csi_camera_{i}',
@@ -45,7 +45,8 @@ def launch_setup(context, *args, **kwargs):
                 "frame_width": 410,
                 "frame_height": 205,
                 "frame_rate": 15.0,
-                "camera_num": i  
+                "camera_num": i,
+                "ip": LaunchConfiguration('ip')
             }]
         )
         csi_camera_nodes.append(node)
@@ -60,35 +61,43 @@ def generate_launch_description():
         default_value='3',
         description='List of camera IDs to launch (e.g., "3" or "0, 1, 2, 3")'
     )
+
+    ip_arg = DeclareLaunchArgument(
+        'ip',
+        default_value='localhost',
+        description='IP address of the QCar2 virtual device'
+    )
     
     lidar_node = Node(
-            package='qcar2_nodes',
+            package='qcar2_nodex',
             executable='lidar',
             name='Lidar',
-            parameters=[{"device_type":"virtual"}]
+            parameters=[{"device_type":"virtual", "ip": LaunchConfiguration('ip')}]
         )
     
     realsense_camera_node = Node(
-            package='qcar2_nodes',
+            package='qcar2_nodex',
             executable='rgbd',
             name='RealsenseCamera',
             parameters=[{"device_type":"virtual"},
                         {"frame_width_rgb":640},
                         {"frame_height_rgb":480},
                         {"frame_width_depth":640},
-                        {"frame_height_depth":480}]
+                        {"frame_height_depth":480},
+                        {"ip": LaunchConfiguration('ip')}]
         )
     
     qcar2_hardware = Node(
-            package='qcar2_nodes',
+            package='qcar2_nodex',
             executable='qcar2_hardware',
             name='qcar2_hardware',
-            parameters=[{"device_type":"virtual"}]
+            parameters=[{"device_type":"virtual", "ip": LaunchConfiguration('ip')}]
 
         )
      
     return LaunchDescription([
         camera_ids_config_arg,
+        ip_arg,
         lidar_node,
         realsense_camera_node,
         qcar2_hardware,
