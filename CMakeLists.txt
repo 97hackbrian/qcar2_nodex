@@ -70,6 +70,10 @@ ament_target_dependencies(fixed_lidar_frame_virtual geometry_msgs rclcpp tf2_ros
 add_executable(nav2_qcar2_converter src/nav2_qcar_command_convert.cpp)
 ament_target_dependencies(nav2_qcar2_converter rclcpp geometry_msgs qcar2_interfaces)
 
+# Battery buzzer alert (uses Tegra DSPK via ALSA aplay)
+add_executable(buzzer_alert src/buzzer_alert.cpp)
+ament_target_dependencies(buzzer_alert rclcpp std_msgs sensor_msgs)
+
 
 # Install nodes
 install(TARGETS qcar2_hardware
@@ -96,6 +100,9 @@ install(TARGETS fixed_lidar_frame
   DESTINATION lib/${PROJECT_NAME})
 
 install(TARGETS fixed_lidar_frame_virtual
+  DESTINATION lib/${PROJECT_NAME})
+
+install(TARGETS buzzer_alert
   DESTINATION lib/${PROJECT_NAME})
 
 # Install launch files
