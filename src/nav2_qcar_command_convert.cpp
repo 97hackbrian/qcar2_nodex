@@ -44,9 +44,21 @@ class Nav2QCarConverter : public rclcpp::Node
 
     private:       
         void nav2_command_callback(const geometry_msgs::msg::Twist &nav2_commands){
-            nav2_speed = nav2_commands.linear.x;
-            nav2_steering = nav2_commands.angular.z;
+            // Nav2 usa convención ROS estándar:
+            //   linear.x  = velocidad lineal (avance/retroceso)
+            //   angular.z = velocidad angular (giro)
+            double raw_speed = nav2_commands.linear.x;
+            double raw_steering = nav2_commands.angular.z;
 
+            // Delimitar velocidad lineal a 0.2 m/s
+            if (raw_speed > 0.2) nav2_speed = 0.2;
+            else if (raw_speed < -0.2) nav2_speed = -0.2;
+            else nav2_speed = raw_speed;
+
+            // Delimitar steering a 0.6 rads
+            if (raw_steering > 0.6) nav2_steering = 0.6;
+            else if (raw_steering < -0.6) nav2_steering = -0.6;
+            else nav2_steering = raw_steering;
         }
 
 
@@ -63,8 +75,11 @@ class Nav2QCarConverter : public rclcpp::Node
             name.push_back("steering_angle");
             name.push_back("motor_throttle");
 
-            val.push_back(nav2_steering);
-            val.push_back(nav2_speed);
+            // El hardware lee los strings, pero están cruzados internamente.
+            // 'steering_angle' controla físicamente el motor (velocidad).
+            // 'motor_throttle' controla físicamente el servo (dirección).
+            val.push_back(nav2_steering);       // Asignado a "steering_angle"
+            val.push_back(nav2_speed);    // Asignado a "motor_throttle"
                                                             
             motor_command.motor_names = name;
             motor_command.values = val;
