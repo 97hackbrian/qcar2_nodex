@@ -29,12 +29,17 @@ class Nav2QCarConverter : public rclcpp::Node
     // ── Ackermann parameters ────────────────────────────────────────
     this->declare_parameter("wheelbase", 0.256);       // QCar2 wheelbase (m)
     this->declare_parameter("max_steer_rad", 0.7);     // Physical servo limit (rad)
+    // Steering bias: positive = corrige drift a la izquierda (empuja a la derecha)
+    //                negative = corrige drift a la derecha (empuja a la izquierda)
+    // Valores típicos: 0.03 a 0.09 rad
+    this->declare_parameter("steer_bias", -0.2);
     wheelbase_     = this->get_parameter("wheelbase").as_double();
     max_steer_rad_ = this->get_parameter("max_steer_rad").as_double();
+    steer_bias_    = this->get_parameter("steer_bias").as_double();
 
     RCLCPP_INFO(this->get_logger(),
-        "Ackermann converter: wheelbase=%.3fm, max_steer=%.2f rad (%.1f deg)",
-        wheelbase_, max_steer_rad_, max_steer_rad_ * 180.0 / M_PI);
+        "Ackermann converter: wheelbase=%.3fm, max_steer=%.2f rad (%.1f deg), steer_bias=%.3f rad",
+        wheelbase_, max_steer_rad_, max_steer_rad_ * 180.0 / M_PI, steer_bias_);
 
     // configuring command publisher
     command_publisher_  = this->create_publisher<qcar2_interfaces::msg::MotorCommands>("qcar2_motor_speed_cmd", 1);
@@ -68,14 +73,22 @@ class Nav2QCarConverter : public rclcpp::Node
 
             // ── Ackermann conversion: angular.z (rad/s) → steering angle (rad) ──
             // Formula: steering_angle = atan(wheelbase * wz / vx)
+            //
+            // SIGN CONVENTION (MATCHED — no negation needed):
+            //   ROS:   angular.z > 0 = girar IZQUIERDA (CCW)
+            //   QCar2: steering  > 0 = girar IZQUIERDA
+            //   QCar2: steering  < 0 = girar DERECHA
             double vx = nav2_speed;
 
             if (std::abs(vx) > 0.01) {
                 nav2_steering = std::atan(wheelbase_ * wz / vx);
             } else {
-                // Robot nearly stopped: scale wz to a steering angle proportionally
                 nav2_steering = wheelbase_ * wz;
             }
+
+            // ── Apply steering bias to correct drift ──
+            // Drift a la izquierda → steer_bias positivo (empuja derecha)
+            nav2_steering += steer_bias_;
 
             // ── Clamp to physical servo range [-max_steer, +max_steer] ──
             if (nav2_steering >  max_steer_rad_) nav2_steering =  max_steer_rad_;
@@ -188,6 +201,7 @@ class Nav2QCarConverter : public rclcpp::Node
         double nav2_steering = 0;
         double wheelbase_ = 0.256;
         double max_steer_rad_ = 0.7;
+        double steer_bias_ = 0.05;
 
         rclcpp::TimerBase::SharedPtr timer_;
         rclcpp::TimerBase::SharedPtr timer2_;
