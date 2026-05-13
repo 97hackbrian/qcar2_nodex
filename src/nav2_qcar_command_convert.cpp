@@ -28,11 +28,11 @@ class Nav2QCarConverter : public rclcpp::Node
     {
     // ── Ackermann parameters ────────────────────────────────────────
     this->declare_parameter("wheelbase", 0.256);       // QCar2 wheelbase (m)
-    this->declare_parameter("max_steer_rad", 0.7);     // Physical servo limit (rad)
+    this->declare_parameter("max_steer_rad", 0.9);     // Physical servo limit (rad)
     // Steering bias: positive = corrige drift a la izquierda (empuja a la derecha)
     //                negative = corrige drift a la derecha (empuja a la izquierda)
     // Valores típicos: 0.03 a 0.09 rad
-    this->declare_parameter("steer_bias", -0.2);
+    this->declare_parameter("steer_bias", -0.3);
     wheelbase_     = this->get_parameter("wheelbase").as_double();
     max_steer_rad_ = this->get_parameter("max_steer_rad").as_double();
     steer_bias_    = this->get_parameter("steer_bias").as_double();
