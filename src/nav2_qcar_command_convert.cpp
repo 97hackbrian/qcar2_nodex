@@ -32,7 +32,7 @@ class Nav2QCarConverter : public rclcpp::Node
     // Steering bias: positive = corrige drift a la izquierda (empuja a la derecha)
     //                negative = corrige drift a la derecha (empuja a la izquierda)
     // Valores típicos: 0.03 a 0.09 rad
-    this->declare_parameter("steer_bias", -0.3);
+    this->declare_parameter("steer_bias", -0.27);
     wheelbase_     = this->get_parameter("wheelbase").as_double();
     max_steer_rad_ = this->get_parameter("max_steer_rad").as_double();
     steer_bias_    = this->get_parameter("steer_bias").as_double();
