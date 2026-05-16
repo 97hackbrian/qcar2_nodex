@@ -42,7 +42,7 @@ class Nav2QCarConverter : public rclcpp::Node
         wheelbase_, max_steer_rad_, max_steer_rad_ * 180.0 / M_PI, steer_bias_);
 
     // configuring command publisher
-    command_publisher_  = this->create_publisher<qcar2_interfaces::msg::MotorCommands>("qcar2_motor_speed_cmd", 1);
+    command_publisher_  = this->create_publisher<qcar2_interfaces::msg::MotorCommands>("nav2/motor_cmd", 1);
     // led_publisher_      = this->create_publisher<qcar2_interfaces::msg::BooleanLeds>("qcar2_led_cmd",10);
 
     //configure nav2 subscriber
