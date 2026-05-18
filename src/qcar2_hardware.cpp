@@ -310,12 +310,15 @@ private:
         if (led_color_id == 2)
             {color_value = { 0, 0, 255 };}
         if (led_color_id == 3)
-            {color_value = { 255, 255, 0 };}
+            {color_value = { 255, 128, 0 };}
         if (led_color_id == 4)
             {color_value = { 0, 255, 255 };}
         if (led_color_id == 5)
             {color_value = { 255, 0, 255 };}
-
+        if (led_color_id == 6)
+            {color_value = { 255, 255, 0 };}
+        if (led_color_id == 7)
+            {color_value = { 255, 255, 255 };}
         // { 255, 0, 0 };        /* LED #0: red     */
         // { 0, 255, 0 },        /* LED #1: green   */
         // { 0, 0, 255 },        /* LED #2: blue    */
