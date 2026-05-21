@@ -99,7 +99,7 @@ def generate_launch_description():
         camera_ids_config_arg,
         ip_arg,
         lidar_node,
-        realsense_camera_node,
+        #realsense_camera_node,
         qcar2_hardware,
         OpaqueFunction(function=launch_setup)
     ])
